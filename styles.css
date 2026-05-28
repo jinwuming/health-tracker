@@ -82,6 +82,7 @@ h2 {
 }
 
 .summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-bottom: 10px;
 }
 
@@ -95,17 +96,18 @@ h2 {
 
 .metric-card {
   display: grid;
-  grid-template-columns: 42px 1fr;
+  justify-items: center;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
   min-height: 82px;
-  padding: 12px;
+  padding: 9px 5px;
+  text-align: center;
 }
 
 .metric-icon {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 30px;
+  height: 30px;
   place-items: center;
   border-radius: 8px;
   color: #fff;
@@ -113,8 +115,8 @@ h2 {
 
 .metric-icon svg,
 .icon-button svg {
-  width: 22px;
-  height: 22px;
+  width: 17px;
+  height: 17px;
   fill: currentColor;
 }
 
@@ -137,18 +139,23 @@ h2 {
 .metric-label {
   display: block;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 11px;
+  line-height: 1.2;
   margin-bottom: 3px;
 }
 
 .metric-card strong {
-  font-size: 26px;
+  display: block;
+  font-size: 20px;
   line-height: 1;
 }
 
 .metric-card small {
+  display: block;
   color: var(--muted);
-  margin-left: 4px;
+  margin: 3px 0 0;
+  font-size: 11px;
+  line-height: 1.1;
 }
 
 .entry-panel,
