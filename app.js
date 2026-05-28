@@ -23,6 +23,8 @@ const todayWater = document.querySelector("#todayWater");
 const todayExercise = document.querySelector("#todayExercise");
 const todayLabel = document.querySelector("#todayLabel");
 const segments = document.querySelectorAll(".segment");
+const appTabs = document.querySelectorAll(".app-tab");
+const viewPanels = document.querySelectorAll(".view-panel");
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   window.addEventListener("load", () => {
@@ -104,6 +106,18 @@ segments.forEach((button) => {
   });
 });
 
+appTabs.forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetId = button.dataset.view;
+    appTabs.forEach((tab) => tab.classList.toggle("active", tab === button));
+    viewPanels.forEach((panel) => {
+      const active = panel.id === targetId;
+      panel.classList.toggle("active", active);
+      panel.hidden = !active;
+    });
+  });
+});
+
 render();
 
 function loadRecords() {
@@ -161,7 +175,7 @@ function renderTable(source) {
       <td data-label="体重">${record.weight ? `${record.weight.toFixed(1)} kg` : "--"}</td>
       <td data-label="BMI">${bmi ? `${bmi.toFixed(1)} ${getBmiStatus(bmi).label}` : "--"}</td>
       <td data-label="喝水">${record.water ? `${record.water} ml` : "--"}</td>
-      <td data-label="运动记录">${renderExerciseBox(exercises, record.exercise)}</td>
+      <td data-label="运动">${renderExerciseBox(exercises, record.exercise)}</td>
       <td data-label="备注">${escapeHtml(record.note) || "--"}</td>
     `;
     recordsBody.append(row);
@@ -188,19 +202,32 @@ function renderChart(source) {
   const min = activeChart === "weight" ? Math.min(...values) : 0;
   const max = Math.max(...values);
   const range = Math.max(max - min, 1);
-
-  data.forEach((record) => {
-    const value = record[activeChart];
-    const bar = document.createElement("div");
-    const percent = activeChart === "weight"
-      ? 24 + ((value - min) / range) * 76
-      : Math.max((value / max) * 100, 4);
-
-    bar.className = `bar ${activeChart}`;
-    bar.style.height = `${percent}%`;
-    bar.innerHTML = `<strong>${formatChartValue(value)}</strong><span>${record.date.slice(5)}</span>`;
-    chart.append(bar);
+  const width = 320;
+  const height = 150;
+  const padding = { top: 18, right: 14, bottom: 26, left: 14 };
+  const plotWidth = width - padding.left - padding.right;
+  const plotHeight = height - padding.top - padding.bottom;
+  const color = activeChart === "water" ? "#1b7c83" : activeChart === "exercise" ? "#bd5542" : "#2f7d4a";
+  const points = data.map((record, index) => {
+    const x = padding.left + (data.length === 1 ? plotWidth / 2 : (index / (data.length - 1)) * plotWidth);
+    const ratio = activeChart === "weight" ? (record[activeChart] - min) / range : record[activeChart] / max;
+    const y = padding.top + plotHeight - Math.max(0, Math.min(1, ratio)) * plotHeight;
+    return { x, y, record, value: record[activeChart] };
   });
+  const pointString = points.map((point) => `${point.x},${point.y}`).join(" ");
+
+  chart.innerHTML = `
+    <svg class="line-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="趋势折线图">
+      <polyline class="line-chart-path" points="${pointString}" fill="none" stroke="${color}" />
+      ${points.map((point) => `
+        <g>
+          <circle cx="${point.x}" cy="${point.y}" r="4" fill="${color}"></circle>
+          <text class="line-value" x="${point.x}" y="${point.y - 8}" text-anchor="middle">${formatChartValue(point.value)}</text>
+          <text class="line-date" x="${point.x}" y="${height - 7}" text-anchor="middle">${point.record.date.slice(5)}</text>
+        </g>
+      `).join("")}
+    </svg>
+  `;
 }
 
 function getExerciseEntries() {
@@ -272,8 +299,7 @@ function normalizeExercises(record) {
     return record.exercises.filter((item) => item.type && item.minutes);
   }
   if (Array.isArray(record.exerciseTypes)) {
-    const total = record.exercise || 0;
-    return record.exerciseTypes.map((type) => ({ type, minutes: null, total }));
+    return record.exerciseTypes.map((type) => ({ type, minutes: null }));
   }
   if (record.exerciseType) {
     return [{ type: record.exerciseType, minutes: record.exercise || null }];

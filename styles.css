@@ -4,6 +4,7 @@
   --ink: #16211b;
   --muted: #65736b;
   --line: #dfe7e1;
+  --line-soft: #edf2ee;
   --green: #2f7d4a;
   --teal: #1b7c83;
   --coral: #bd5542;
@@ -21,6 +22,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -33,13 +35,13 @@ textarea {
 .app-shell {
   width: min(100%, 430px);
   margin: 0 auto;
-  padding: 14px 10px 28px;
+  padding: 12px 10px 28px;
 }
 
 .topbar {
   display: grid;
-  gap: 10px;
-  padding: 4px 2px 14px;
+  gap: 8px;
+  padding: 2px 2px 12px;
 }
 
 .eyebrow {
@@ -58,21 +60,23 @@ h2 {
 }
 
 h1 {
-  font-size: 34px;
+  font-size: 30px;
   line-height: 1.05;
+  font-weight: 900;
 }
 
 h2 {
-  font-size: 18px;
+  font-size: 17px;
+  font-weight: 900;
 }
 
 .date-chip {
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: var(--surface);
   color: var(--muted);
-  padding: 10px 12px;
-  font-size: 14px;
+  padding: 8px 10px;
+  font-size: 13px;
 }
 
 .summary-grid,
@@ -83,13 +87,13 @@ h2 {
 
 .summary-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .metric-card,
 .entry-panel,
 .history-panel {
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: var(--surface);
 }
@@ -99,8 +103,8 @@ h2 {
   justify-items: center;
   align-items: center;
   gap: 6px;
-  min-height: 82px;
-  padding: 9px 5px;
+  min-height: 68px;
+  padding: 7px 4px;
   text-align: center;
 }
 
@@ -109,7 +113,7 @@ h2 {
   width: 30px;
   height: 30px;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 7px;
   color: #fff;
 }
 
@@ -138,7 +142,7 @@ h2 {
 
 .metric-label {
   display: block;
-  color: var(--muted);
+  color: #748078;
   font-size: 11px;
   line-height: 1.2;
   margin-bottom: 3px;
@@ -146,7 +150,7 @@ h2 {
 
 .metric-card strong {
   display: block;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1;
 }
 
@@ -154,13 +158,13 @@ h2 {
   display: block;
   color: var(--muted);
   margin: 3px 0 0;
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.1;
 }
 
 .entry-panel,
 .history-panel {
-  padding: 14px;
+  padding: 12px;
 }
 
 .panel-title {
@@ -168,15 +172,55 @@ h2 {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+}
+
+.panel-title.stacked {
+  display: grid;
+  align-items: stretch;
+}
+
+.app-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: var(--surface);
+  margin-bottom: 10px;
+  padding: 4px;
+}
+
+.app-tab {
+  min-height: 36px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.app-tab.active {
+  background: var(--green);
+  color: #fff;
+}
+
+.view-panel[hidden] {
+  display: none;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 label {
   display: grid;
-  gap: 6px;
-  margin-bottom: 11px;
-  color: var(--muted);
-  font-size: 14px;
+  gap: 5px;
+  margin-bottom: 9px;
+  color: #5f6d65;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -184,13 +228,14 @@ input,
 select,
 textarea {
   width: 100%;
-  min-height: 44px;
-  border: 1px solid var(--line);
+  min-height: 40px;
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: var(--soft);
   color: var(--ink);
-  padding: 10px 11px;
+  padding: 8px 10px;
   outline: none;
+  font-size: 14px;
 }
 
 input:focus,
@@ -211,22 +256,28 @@ textarea {
 }
 
 .exercise-fieldset legend {
-  color: var(--muted);
-  font-size: 14px;
+  color: #5f6d65;
+  font-size: 12px;
   font-weight: 800;
   margin-bottom: 7px;
 }
 
 .exercise-picker,
 .custom-exercise,
+.exercise-compact,
 .selected-exercises {
   display: grid;
   gap: 8px;
 }
 
 .exercise-picker,
-.custom-exercise {
+.custom-exercise,
+.exercise-compact {
   margin-bottom: 8px;
+}
+
+.exercise-compact {
+  grid-template-columns: 1fr 1fr 56px;
 }
 
 .custom-exercise {
@@ -238,12 +289,13 @@ textarea {
   grid-template-columns: 1fr 86px 34px;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: var(--soft);
   color: var(--ink);
-  padding: 8px;
+  padding: 7px;
   font-weight: 700;
+  font-size: 14px;
 }
 
 .selected-exercise-row input {
@@ -252,11 +304,11 @@ textarea {
 }
 
 .inline-empty {
-  border: 1px dashed var(--line);
+  border: 1px dashed #d6dfd8;
   border-radius: 8px;
   color: var(--muted);
   margin: 0;
-  padding: 10px;
+  padding: 9px;
   font-size: 13px;
 }
 
@@ -271,7 +323,7 @@ textarea {
 
 .primary-button {
   width: 100%;
-  min-height: 46px;
+  min-height: 42px;
   border-radius: 8px;
   background: var(--green);
   color: #fff;
@@ -280,11 +332,12 @@ textarea {
 }
 
 .secondary-button {
-  min-height: 42px;
+  min-height: 40px;
   border-radius: 8px;
   background: var(--ink);
   color: #fff;
   padding: 0 12px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -292,7 +345,7 @@ textarea {
 .mini-icon-button {
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 7px;
   background: #f1f4f1;
   color: var(--coral);
 }
@@ -313,13 +366,13 @@ textarea {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .segment {
-  min-height: 36px;
+  min-height: 34px;
   background: var(--soft);
   color: var(--muted);
   padding: 0 8px;
@@ -332,69 +385,53 @@ textarea {
 }
 
 .bmi-note {
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: var(--soft);
   color: var(--muted);
   margin-bottom: 12px;
-  padding: 10px 12px;
+  padding: 9px 10px;
   font-size: 13px;
   line-height: 1.5;
 }
 
 .chart-wrap {
   height: 178px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background:
     linear-gradient(#e6eee8 1px, transparent 1px) 0 0 / 100% 25%,
     var(--soft);
-  padding: 14px 10px 28px;
+  padding: 12px 8px 26px;
   margin-bottom: 12px;
 }
 
 .chart {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(24px, 1fr);
-  align-items: end;
-  gap: 7px;
+  width: 100%;
   height: 100%;
 }
 
-.bar {
-  position: relative;
-  min-height: 4px;
-  border-radius: 6px 6px 0 0;
-  background: var(--green);
+.line-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.bar.water {
-  background: var(--teal);
+.line-chart-path {
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.bar.exercise {
-  background: var(--coral);
-}
-
-.bar span {
-  position: absolute;
-  left: 50%;
-  bottom: -23px;
-  transform: translateX(-50%);
-  color: var(--muted);
+.line-value {
+  fill: var(--ink);
   font-size: 10px;
-  white-space: nowrap;
+  font-weight: 800;
 }
 
-.bar strong {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 4px);
-  transform: translateX(-50%);
-  color: var(--ink);
+.line-date {
+  fill: var(--muted);
   font-size: 10px;
-  white-space: nowrap;
 }
 
 .table-wrap {
@@ -420,21 +457,21 @@ thead {
 }
 
 tr {
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: var(--soft);
   margin-bottom: 10px;
-  padding: 8px 10px;
+  padding: 7px 10px;
 }
 
 td {
   display: grid;
-  grid-template-columns: 74px 1fr;
+  grid-template-columns: 68px 1fr;
   gap: 10px;
   border-bottom: 0;
   color: #263229;
-  padding: 7px 0;
-  font-size: 14px;
+  padding: 6px 0;
+  font-size: 13px;
   text-align: left;
   vertical-align: top;
 }
@@ -443,6 +480,7 @@ td::before {
   content: attr(data-label);
   color: var(--muted);
   font-weight: 900;
+  font-size: 12px;
 }
 
 .exercise-box {
@@ -451,10 +489,10 @@ td::before {
   width: 100%;
   min-width: 0;
   max-width: none;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: #fff;
-  padding: 8px 10px;
+  padding: 7px 9px;
 }
 
 .exercise-box span,

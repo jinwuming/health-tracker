@@ -27,7 +27,7 @@
             <svg viewBox="0 0 24 24"><path d="M6.5 7.7A4.7 4.7 0 0 1 11.2 3h1.6a4.7 4.7 0 0 1 4.7 4.7L19 20H5L6.5 7.7Zm3.1.3h4.8A2.4 2.4 0 0 0 12 5.2 2.4 2.4 0 0 0 9.6 8Z"/></svg>
           </div>
           <div>
-            <span class="metric-label">最新体重</span>
+            <span class="metric-label">体重</span>
             <strong id="latestWeight">--</strong>
             <small>kg</small>
           </div>
@@ -37,7 +37,7 @@
             <svg viewBox="0 0 24 24"><path d="M5 5h14v14H5V5Zm2 2v10h10V7H7Zm2 7.5 1.5-4 1.7 2.5 1.1-1.4L15.5 15H9Z"/></svg>
           </div>
           <div>
-            <span class="metric-label">BMI / 标准</span>
+            <span class="metric-label">BMI</span>
             <strong id="bmiValue">--</strong>
             <small id="bmiStatus">待录入</small>
           </div>
@@ -47,7 +47,7 @@
             <svg viewBox="0 0 24 24"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11Zm-3.2 11a3.2 3.2 0 0 0 5 2.7c-2.2-.1-3.8-1.3-5-2.7Z"/></svg>
           </div>
           <div>
-            <span class="metric-label">今日喝水</span>
+            <span class="metric-label">喝水</span>
             <strong id="todayWater">0</strong>
             <small>ml</small>
           </div>
@@ -57,14 +57,19 @@
             <svg viewBox="0 0 24 24"><path d="M4 10h2V8h2v8H6v-2H4v-4Zm14-2v2h2v4h-2v2h-2V8h2ZM9 11h6v2H9v-2Z"/></svg>
           </div>
           <div>
-            <span class="metric-label">今日锻炼</span>
+            <span class="metric-label">运动</span>
             <strong id="todayExercise">0</strong>
             <small>分钟</small>
           </div>
         </article>
       </section>
 
-      <section class="workspace">
+      <nav class="app-tabs" aria-label="页面切换">
+        <button class="app-tab active" type="button" data-view="recordView">记录</button>
+        <button class="app-tab" type="button" data-view="historyView">历史</button>
+      </nav>
+
+      <section class="view-panel active" id="recordView">
         <form class="entry-panel" id="entryForm">
           <div class="panel-title">
             <h2>添加记录</h2>
@@ -73,26 +78,28 @@
             </button>
           </div>
 
-          <label>
-            日期
-            <input type="date" id="dateInput" required>
-          </label>
-          <label>
-            身高 cm
-            <input type="number" id="heightInput" min="80" max="240" step="0.1" placeholder="例如 170">
-          </label>
-          <label>
-            体重 kg
-            <input type="number" id="weightInput" min="20" max="300" step="0.1" placeholder="例如 68.5">
-          </label>
-          <label>
-            喝水 ml
-            <input type="number" id="waterInput" min="0" max="10000" step="50" placeholder="例如 500">
-          </label>
+          <div class="field-grid">
+            <label>
+              日期
+              <input type="date" id="dateInput" required>
+            </label>
+            <label>
+              身高 cm
+              <input type="number" id="heightInput" min="80" max="240" step="0.1" placeholder="170">
+            </label>
+            <label>
+              体重 kg
+              <input type="number" id="weightInput" min="20" max="300" step="0.1" placeholder="68.5">
+            </label>
+            <label>
+              喝水 ml
+              <input type="number" id="waterInput" min="0" max="10000" step="50" placeholder="500">
+            </label>
+          </div>
 
           <fieldset class="exercise-fieldset">
             <legend>运动记录</legend>
-            <div class="exercise-picker">
+            <div class="exercise-compact">
               <select id="exerciseSelect" aria-label="选择运动">
                 <option value="">选择运动</option>
                 <option value="跑步">跑步</option>
@@ -103,29 +110,30 @@
                 <option value="瑜伽">瑜伽</option>
                 <option value="游泳">游泳</option>
               </select>
-            </div>
-            <div class="custom-exercise">
-              <input type="text" id="customExerciseInput" maxlength="16" placeholder="自定义运动名称">
-              <button class="secondary-button" type="button" id="addCustomExerciseButton">添加自定义</button>
+              <input type="text" id="customExerciseInput" maxlength="16" placeholder="自定义">
+              <button class="secondary-button" type="button" id="addCustomExerciseButton">添加</button>
             </div>
             <div class="selected-exercises" id="selectedExercises" aria-live="polite">
-              <p class="inline-empty" id="exerciseEmpty">选择运动后在这里填写分钟数。</p>
+              <p class="inline-empty" id="exerciseEmpty">选择运动后填写分钟数。</p>
             </div>
           </fieldset>
+
           <label>
             备注
-            <textarea id="noteInput" rows="3" placeholder="可记录饮食、睡眠或运动内容"></textarea>
+            <textarea id="noteInput" rows="2" placeholder="饮食、睡眠或运动内容"></textarea>
           </label>
           <button class="primary-button" type="submit">保存记录</button>
         </form>
+      </section>
 
+      <section class="view-panel" id="historyView" hidden>
         <section class="history-panel">
-          <div class="panel-title">
+          <div class="panel-title stacked">
             <h2>趋势与历史</h2>
             <div class="segmented" role="tablist" aria-label="趋势类型">
               <button class="segment active" type="button" data-chart="weight">体重</button>
               <button class="segment" type="button" data-chart="water">喝水</button>
-              <button class="segment" type="button" data-chart="exercise">锻炼</button>
+              <button class="segment" type="button" data-chart="exercise">运动</button>
             </div>
           </div>
 
