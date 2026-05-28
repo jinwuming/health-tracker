@@ -156,13 +156,13 @@ function renderTable(source) {
     const bmi = record.weight && record.height ? calculateBmi(record.weight, record.height) : null;
     const exercises = normalizeExercises(record);
     row.innerHTML = `
-      <td>${formatDisplayDate(record.date)}</td>
-      <td>${record.height ? `${record.height.toFixed(1)} cm` : "--"}</td>
-      <td>${record.weight ? `${record.weight.toFixed(1)} kg` : "--"}</td>
-      <td>${bmi ? `${bmi.toFixed(1)} ${getBmiStatus(bmi).label}` : "--"}</td>
-      <td>${record.water ? `${record.water} ml` : "--"}</td>
-      <td>${renderExerciseBox(exercises, record.exercise)}</td>
-      <td>${escapeHtml(record.note) || "--"}</td>
+      <td data-label="日期">${formatDisplayDate(record.date)}</td>
+      <td data-label="身高">${record.height ? `${record.height.toFixed(1)} cm` : "--"}</td>
+      <td data-label="体重">${record.weight ? `${record.weight.toFixed(1)} kg` : "--"}</td>
+      <td data-label="BMI">${bmi ? `${bmi.toFixed(1)} ${getBmiStatus(bmi).label}` : "--"}</td>
+      <td data-label="喝水">${record.water ? `${record.water} ml` : "--"}</td>
+      <td data-label="运动记录">${renderExerciseBox(exercises, record.exercise)}</td>
+      <td data-label="备注">${escapeHtml(record.note) || "--"}</td>
     `;
     recordsBody.append(row);
   });
