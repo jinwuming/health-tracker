@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#2f7d4a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="健康记录">
+    <title>健康记录</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Daily health tracker</p>
+          <h1>健康记录</h1>
+        </div>
+        <div class="date-chip" id="todayLabel"></div>
+      </header>
+
+      <section class="summary-grid" aria-label="今日汇总">
+        <article class="metric-card">
+          <div class="metric-icon icon-weight" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M6.5 7.7A4.7 4.7 0 0 1 11.2 3h1.6a4.7 4.7 0 0 1 4.7 4.7L19 20H5L6.5 7.7Zm3.1.3h4.8A2.4 2.4 0 0 0 12 5.2 2.4 2.4 0 0 0 9.6 8Z"/></svg>
+          </div>
+          <div>
+            <span class="metric-label">最新体重</span>
+            <strong id="latestWeight">--</strong>
+            <small>kg</small>
+          </div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon icon-bmi" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 5h14v14H5V5Zm2 2v10h10V7H7Zm2 7.5 1.5-4 1.7 2.5 1.1-1.4L15.5 15H9Z"/></svg>
+          </div>
+          <div>
+            <span class="metric-label">BMI / 标准</span>
+            <strong id="bmiValue">--</strong>
+            <small id="bmiStatus">待录入</small>
+          </div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon icon-water" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11Zm-3.2 11a3.2 3.2 0 0 0 5 2.7c-2.2-.1-3.8-1.3-5-2.7Z"/></svg>
+          </div>
+          <div>
+            <span class="metric-label">今日喝水</span>
+            <strong id="todayWater">0</strong>
+            <small>ml</small>
+          </div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon icon-workout" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 10h2V8h2v8H6v-2H4v-4Zm14-2v2h2v4h-2v2h-2V8h2ZM9 11h6v2H9v-2Z"/></svg>
+          </div>
+          <div>
+            <span class="metric-label">今日锻炼</span>
+            <strong id="todayExercise">0</strong>
+            <small>分钟</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <form class="entry-panel" id="entryForm">
+          <div class="panel-title">
+            <h2>添加记录</h2>
+            <button class="icon-button" type="button" id="clearButton" title="清空全部记录" aria-label="清空全部记录">
+              <svg viewBox="0 0 24 24"><path d="M8 7V5.5C8 4.7 8.7 4 9.5 4h5c.8 0 1.5.7 1.5 1.5V7h3v2H5V7h3Zm2 0h4V6h-4v1Zm-2.3 4h2l.4 7h-2l-.4-7Zm4.3 0h2v7h-2v-7Zm4.3 0h2l-.4 7h-2l.4-7Z"/></svg>
+            </button>
+          </div>
+
+          <label>
+            日期
+            <input type="date" id="dateInput" required>
+          </label>
+          <label>
+            身高 cm
+            <input type="number" id="heightInput" min="80" max="240" step="0.1" placeholder="例如 170">
+          </label>
+          <label>
+            体重 kg
+            <input type="number" id="weightInput" min="20" max="300" step="0.1" placeholder="例如 68.5">
+          </label>
+          <label>
+            喝水 ml
+            <input type="number" id="waterInput" min="0" max="10000" step="50" placeholder="例如 500">
+          </label>
+
+          <fieldset class="exercise-fieldset">
+            <legend>运动时间</legend>
+            <div class="exercise-picker">
+              <select id="exerciseSelect" aria-label="选择运动">
+                <option value="">选择运动</option>
+                <option value="跑步">跑步</option>
+                <option value="八段锦">八段锦</option>
+                <option value="步行">步行</option>
+                <option value="骑行">骑行</option>
+                <option value="力量训练">力量训练</option>
+                <option value="瑜伽">瑜伽</option>
+                <option value="游泳">游泳</option>
+              </select>
+            </div>
+            <div class="custom-exercise">
+              <input type="text" id="customExerciseInput" maxlength="16" placeholder="自定义运动名称">
+              <button class="secondary-button" type="button" id="addCustomExerciseButton">添加自定义</button>
+            </div>
+            <div class="selected-exercises" id="selectedExercises" aria-live="polite">
+              <p class="inline-empty" id="exerciseEmpty">选择运动后在这里填写分钟数。</p>
+            </div>
+          </fieldset>
+          <label>
+            备注
+            <textarea id="noteInput" rows="3" placeholder="可记录饮食、睡眠或运动内容"></textarea>
+          </label>
+          <button class="primary-button" type="submit">保存记录</button>
+        </form>
+
+        <section class="history-panel">
+          <div class="panel-title">
+            <h2>趋势与历史</h2>
+            <div class="segmented" role="tablist" aria-label="趋势类型">
+              <button class="segment active" type="button" data-chart="weight">体重</button>
+              <button class="segment" type="button" data-chart="water">喝水</button>
+              <button class="segment" type="button" data-chart="exercise">锻炼</button>
+            </div>
+          </div>
+
+          <div class="bmi-note" id="bmiNote">录入身高和体重后，会按 BMI 判断体重是否标准。</div>
+
+          <div class="chart-wrap">
+            <div class="chart" id="chart"></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>身高</th>
+                  <th>体重</th>
+                  <th>BMI</th>
+                  <th>喝水</th>
+                  <th>运动记录</th>
+                  <th>备注</th>
+                </tr>
+              </thead>
+              <tbody id="recordsBody"></tbody>
+            </table>
+            <p class="empty-state" id="emptyState">还没有记录，先添加今天的数据。</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
