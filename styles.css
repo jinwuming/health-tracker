@@ -6,7 +6,6 @@
   --line: #dfe7e1;
   --line-soft: #edf2ee;
   --green: #2f7d4a;
-  --teal: #1b7c83;
   --coral: #bd5542;
   --gold: #a06c1b;
   --soft: #f7faf7;
@@ -86,7 +85,7 @@ h2 {
 }
 
 .summary-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-bottom: 8px;
 }
 
@@ -126,10 +125,6 @@ h2 {
 
 .icon-weight {
   background: var(--green);
-}
-
-.icon-water {
-  background: var(--teal);
 }
 
 .icon-bmi {
@@ -364,7 +359,7 @@ textarea {
 
 .segmented {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   width: 100%;
   border: 1px solid var(--line-soft);
   border-radius: 8px;
@@ -515,4 +510,52 @@ td::before {
 
 .empty-state.show {
   display: block;
+}
+
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: rgba(22, 33, 27, 0.42);
+  padding: 18px;
+}
+
+.welcome-overlay[hidden] {
+  display: none;
+}
+
+.welcome-dialog {
+  width: min(100%, 340px);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 18px 44px rgba(22, 33, 27, 0.18);
+}
+
+.welcome-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 12px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--coral);
+  color: #fff;
+}
+
+.welcome-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.welcome-dialog p {
+  margin: 9px 0 17px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
 }

@@ -1,7 +1,7 @@
 {
   "name": "健康记录",
   "short_name": "健康记录",
-  "description": "记录体重、喝水、运动时间和 BMI 的健康记录应用。",
+  "description": "记录运动时间、体重和 BMI 的健康记录应用。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

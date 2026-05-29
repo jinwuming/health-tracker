@@ -1,10 +1,10 @@
 const STORAGE_KEY = "health-tracker-records-v1";
+const WELCOME_STORAGE_KEY = "health-tracker-welcome-date";
 
 const form = document.querySelector("#entryForm");
 const dateInput = document.querySelector("#dateInput");
 const heightInput = document.querySelector("#heightInput");
 const weightInput = document.querySelector("#weightInput");
-const waterInput = document.querySelector("#waterInput");
 const exerciseSelect = document.querySelector("#exerciseSelect");
 const customExerciseInput = document.querySelector("#customExerciseInput");
 const addCustomExerciseButton = document.querySelector("#addCustomExerciseButton");
@@ -19,9 +19,10 @@ const latestWeight = document.querySelector("#latestWeight");
 const bmiValue = document.querySelector("#bmiValue");
 const bmiStatus = document.querySelector("#bmiStatus");
 const bmiNote = document.querySelector("#bmiNote");
-const todayWater = document.querySelector("#todayWater");
 const todayExercise = document.querySelector("#todayExercise");
 const todayLabel = document.querySelector("#todayLabel");
+const welcomeOverlay = document.querySelector("#welcomeOverlay");
+const welcomeCloseButton = document.querySelector("#welcomeCloseButton");
 const segments = document.querySelectorAll(".segment");
 const appTabs = document.querySelectorAll(".app-tab");
 const viewPanels = document.querySelectorAll(".view-panel");
@@ -44,6 +45,7 @@ todayLabel.textContent = new Intl.DateTimeFormat("zh-CN", {
   weekday: "long",
 }).format(today);
 heightInput.value = getLatestHeight(records) || "";
+showDailyWelcome();
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -52,13 +54,12 @@ form.addEventListener("submit", (event) => {
     date: dateInput.value,
     height: toNumber(heightInput.value),
     weight: toNumber(weightInput.value),
-    water: toNumber(waterInput.value),
     exercises: getExerciseEntries(),
     note: noteInput.value.trim(),
   };
   record.exercise = getExerciseTotal(record.exercises);
 
-  if (!record.height && !record.weight && !record.water && !record.exercise && !record.note) {
+  if (!record.height && !record.weight && !record.exercise && !record.note) {
     return;
   }
 
@@ -118,7 +119,30 @@ appTabs.forEach((button) => {
   });
 });
 
+welcomeCloseButton.addEventListener("click", closeDailyWelcome);
+
+welcomeOverlay.addEventListener("click", (event) => {
+  if (event.target === welcomeOverlay) {
+    closeDailyWelcome();
+  }
+});
+
 render();
+
+function showDailyWelcome() {
+  if (localStorage.getItem(WELCOME_STORAGE_KEY) === todayKey) {
+    return;
+  }
+
+  welcomeOverlay.hidden = false;
+  welcomeCloseButton.focus();
+}
+
+function closeDailyWelcome() {
+  localStorage.setItem(WELCOME_STORAGE_KEY, todayKey);
+  welcomeOverlay.hidden = true;
+  dateInput.focus();
+}
 
 function loadRecords() {
   try {
@@ -157,7 +181,6 @@ function renderSummary(source) {
   bmiNote.textContent = status
     ? `按中国成人 BMI 标准：${status.label}。身高 ${latestHeight} cm 的标准体重约 ${getStandardWeightRange(latestHeight)} kg。`
     : "录入身高和体重后，会按 BMI 判断体重是否标准。";
-  todayWater.textContent = todayRecord?.water ? String(todayRecord.water) : "0";
   todayExercise.textContent = todayRecord?.exercise ? String(todayRecord.exercise) : "0";
 }
 
@@ -174,7 +197,6 @@ function renderTable(source) {
       <td data-label="身高">${record.height ? `${record.height.toFixed(1)} cm` : "--"}</td>
       <td data-label="体重">${record.weight ? `${record.weight.toFixed(1)} kg` : "--"}</td>
       <td data-label="BMI">${bmi ? `${bmi.toFixed(1)} ${getBmiStatus(bmi).label}` : "--"}</td>
-      <td data-label="喝水">${record.water ? `${record.water} ml` : "--"}</td>
       <td data-label="运动">${renderExerciseBox(exercises, record.exercise)}</td>
       <td data-label="备注">${escapeHtml(record.note) || "--"}</td>
     `;
@@ -207,7 +229,7 @@ function renderChart(source) {
   const padding = { top: 18, right: 14, bottom: 26, left: 14 };
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
-  const color = activeChart === "water" ? "#1b7c83" : activeChart === "exercise" ? "#bd5542" : "#2f7d4a";
+  const color = activeChart === "exercise" ? "#bd5542" : "#2f7d4a";
   const points = data.map((record, index) => {
     const x = padding.left + (data.length === 1 ? plotWidth / 2 : (index / (data.length - 1)) * plotWidth);
     const ratio = activeChart === "weight" ? (record[activeChart] - min) / range : record[activeChart] / max;
