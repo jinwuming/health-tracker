@@ -209,6 +209,10 @@ function renderChart(source) {
   const data = source
     .slice()
     .reverse()
+    .map((record) => ({
+      ...record,
+      bmi: getRecordBmi(record, source),
+    }))
     .filter((item) => item[activeChart])
     .slice(-10);
 
@@ -220,8 +224,9 @@ function renderChart(source) {
     return;
   }
 
+  const config = getChartConfig(activeChart);
   const values = data.map((item) => item[activeChart]);
-  const min = activeChart === "weight" ? Math.min(...values) : 0;
+  const min = activeChart === "exercise" ? 0 : Math.min(...values);
   const max = Math.max(...values);
   const range = Math.max(max - min, 1);
   const width = 320;
@@ -229,27 +234,42 @@ function renderChart(source) {
   const padding = { top: 18, right: 14, bottom: 26, left: 14 };
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
-  const color = activeChart === "exercise" ? "#bd5542" : "#2f7d4a";
   const points = data.map((record, index) => {
+    const value = record[activeChart];
     const x = padding.left + (data.length === 1 ? plotWidth / 2 : (index / (data.length - 1)) * plotWidth);
-    const ratio = activeChart === "weight" ? (record[activeChart] - min) / range : record[activeChart] / max;
+    const ratio = (value - min) / range;
     const y = padding.top + plotHeight - Math.max(0, Math.min(1, ratio)) * plotHeight;
-    return { x, y, record, value: record[activeChart] };
+    return { x, y, record, value };
   });
   const pointString = points.map((point) => `${point.x},${point.y}`).join(" ");
 
   chart.innerHTML = `
-    <svg class="line-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="趋势折线图">
-      <polyline class="line-chart-path" points="${pointString}" fill="none" stroke="${color}" />
+    <svg class="line-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${config.label}趋势折线图">
+      <polyline class="line-chart-path" points="${pointString}" fill="none" stroke="${config.color}" />
       ${points.map((point) => `
         <g>
-          <circle cx="${point.x}" cy="${point.y}" r="4" fill="${color}"></circle>
-          <text class="line-value" x="${point.x}" y="${point.y - 8}" text-anchor="middle">${formatChartValue(point.value)}</text>
+          <circle cx="${point.x}" cy="${point.y}" r="4" fill="${config.color}"></circle>
+          <text class="line-value" x="${point.x}" y="${point.y - 8}" text-anchor="middle">${config.format(point.value)}</text>
           <text class="line-date" x="${point.x}" y="${height - 7}" text-anchor="middle">${point.record.date.slice(5)}</text>
         </g>
       `).join("")}
     </svg>
   `;
+}
+
+function getRecordBmi(record, source) {
+  const height = record.height || getLatestHeight(source);
+  return record.weight && height ? calculateBmi(record.weight, height) : null;
+}
+
+function getChartConfig(key) {
+  if (key === "bmi") {
+    return { label: "BMI", color: "#a06c1b", format: (value) => value.toFixed(1) };
+  }
+  if (key === "exercise") {
+    return { label: "运动", color: "#bd5542", format: (value) => String(value) };
+  }
+  return { label: "体重", color: "#2f7d4a", format: (value) => value.toFixed(1) };
 }
 
 function getExerciseEntries() {
@@ -374,13 +394,6 @@ function getStandardWeightRange(heightCm) {
 
 function getLatestHeight(source) {
   return source.find((item) => item.height)?.height || null;
-}
-
-function formatChartValue(value) {
-  if (activeChart === "weight") {
-    return value.toFixed(1);
-  }
-  return String(value);
 }
 
 function formatDateKey(date) {
